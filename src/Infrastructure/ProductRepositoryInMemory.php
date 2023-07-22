@@ -28,4 +28,25 @@ class ProductRepositoryInMemory
     {
         return $this->products;
     }
+
+    public function setNewProduct()
+    {
+        $nuevoObjeto = [
+            'id' => 2,
+            'nombre' => 'Producto 2',
+            'referencia' => 'REF002',
+            'precio' => 100.50,
+            'peso' => 0.5,
+            'categoria' => 'Electrónica',
+            'stock' => 10,
+            'fecha_creacion' => '2023-07-19'
+        ];
+        array_push($this->products, $nuevoObjeto);
+        return (array(
+            'message' => 'Producto creado correctamente.',
+            'err' => false,
+            'code' => 201,
+            'data' => $this->products,
+        ));
+    }
 }

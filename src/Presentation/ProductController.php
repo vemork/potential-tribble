@@ -15,6 +15,10 @@ class ProductController
 
     public function getProducts()
     {
-        return $this->getProductsUseCase->execute();
+        return $this->getProductsUseCase->getAllUseCase();
+    }
+    public function setProduct($data)
+    {
+        return $this->getProductsUseCase->setNewProductUseCase($data);
     }
 }

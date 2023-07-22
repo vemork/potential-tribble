@@ -2,6 +2,8 @@
 
 namespace App\Application;
 
+require 'validaciones.php';
+
 use App\Infrastructure\ProductRepositoryInMemory;
 
 class GetProductsUseCase
@@ -13,8 +15,23 @@ class GetProductsUseCase
         $this->productRepository = $productRepository;
     }
 
-    public function execute()
+    public function getAllUseCase()
     {
         return $this->productRepository->getAll();
+    }
+    public function setNewProductUseCase($data)
+    {
+        [$msg, $err] = integridad($data);
+
+        // Validar los datos recibidos (puedes agregar más validaciones según tus requerimientos)
+        if ($err) {
+            return (array(
+                'message' => 'Error: invalid json payload.' . $msg,
+                'err' => true,
+                'code' => 400
+            ));
+        }
+
+        return $this->productRepository->setNewProduct($data);
     }
 }
