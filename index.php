@@ -48,6 +48,14 @@ if ($requestMethod === 'GET' && $requestPath === '/max') {
     echo json_encode($response);
 }
 
+// Endpoint para obtener el producto con mayor ventas
+if ($requestMethod === 'GET' && $requestPath === '/maxsold') {
+    $isDefaultResposneActive = false;
+    $response = $productController->getProductMaxSold();
+
+    echo json_encode($response);
+}
+
 // Endpoint para crear productos
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SERVER['REQUEST_URI'] === '/add') {
     $isDefaultResposneActive = false;

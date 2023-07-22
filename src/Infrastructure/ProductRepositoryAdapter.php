@@ -176,4 +176,45 @@ class ProductRepositoryAdapter implements DatabasePort
 
         return $productosMaxStock;
     }
+
+    public function getMaxProductSold()
+    {
+        $query = "SELECT idproduct, SUM(quantity) as total_quantity
+        FROM sold
+        GROUP BY idproduct
+        ORDER BY total_quantity DESC
+        LIMIT 1;";
+        $this->connection->conectar();
+        $resultado = $this->connection->ejecutar($query);
+
+        while ($fila = $resultado->fetch_assoc()) {
+
+            $productosMaxSold[] = $fila;
+
+            //consultar información adicional desde la tabla productos
+            $query = "SELECT *
+            FROM products
+            WHERE idproducts = " . $fila['idproduct'];
+
+            $this->connection->conectar();
+            $resultado = $this->connection->ejecutar($query);
+
+            while ($fila = $resultado->fetch_assoc()) {
+                $productosMaxSoldInfo[] = $fila;
+            }
+        }
+        $completeMaxSoldProductInfo = [
+            'max_quantity' => $productosMaxSold[0]['total_quantity'],
+            'id' => $productosMaxSoldInfo[0]['idproducts'],
+            'name' => $productosMaxSoldInfo[0]['name'],
+            'reference' => $productosMaxSoldInfo[0]['reference'],
+            'price' => $productosMaxSoldInfo[0]['price'],
+            'weight' => $productosMaxSoldInfo[0]['weight'],
+            'category' => $productosMaxSoldInfo[0]['category'],
+            'stock' => $productosMaxSoldInfo[0]['stock'],
+            'date' => $productosMaxSoldInfo[0]['date'],
+        ];
+        $this->connection->desconectar();
+        return $completeMaxSoldProductInfo;
+    }
 }

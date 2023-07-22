@@ -21,6 +21,10 @@ class ProductController
     {
         return $this->getProductsUseCase->getProductMaxStockUseCase();
     }
+    public function getProductMaxSold()
+    {
+        return $this->getProductsUseCase->getProductMaxSoldUseCase();
+    }
     public function setProduct($data)
     {
         return $this->getProductsUseCase->setNewProductUseCase($data);
