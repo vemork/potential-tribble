@@ -19,7 +19,10 @@ class GetProductsUseCase
     {
         return $this->productRepository->getAll();
     }
-
+    public function getProductMaxStockUseCase()
+    {
+        return $this->productRepository->getMaxProductStock();
+    }
     public function setNewProductUseCase($data)
     {
         [$msg, $err] = integridad($data);
@@ -60,6 +63,6 @@ class GetProductsUseCase
             ));
         }
 
-        return $this->productRepository->setNewProduct($data);
+        return $this->productRepository->setUpdateProduct($data);
     }
 }

@@ -16,7 +16,6 @@ class ProductRepositoryAdapter implements DatabasePort
 
     public function setNewProduct(array $data)
     {
-
         $name = $data['name'];
         $reference = $data['reference'];
         $price = $data['price'];
@@ -62,14 +61,53 @@ class ProductRepositoryAdapter implements DatabasePort
         $this->connection->desconectar();
     }
 
-    public function read($id)
+    public function setUpdateProduct(array $data)
     {
-        // Implementación de la operación de lectura utilizando mysqli o PDO
-    }
+        $id = $data['id'];
+        $name = $data['name'];
+        $reference = $data['reference'];
+        $price = $data['price'];
+        $weight = $data['weight'];
+        $category = $data['category'];
+        $stock = $data['stock'];
+        $date = $data['date'];
 
-    public function update($id, array $data)
-    {
-        // Implementación de la operación de actualización utilizando mysqli o PDO
+
+        $nuevoProductoJSON = [
+            'id' => $data['id'],
+            'name' => $data['name'],
+            'reference' => $data['reference'],
+            'price' => $data['price'],
+            'weight' => $data['weight'],
+            'category' => $data['category'],
+            'stock' => $data['stock'],
+            'date' => $data['date'],
+        ];
+        $this->connection->conectar();
+        $sql = "UPDATE products SET name = ?, reference = ?, price = ?, weight = ?, category = ?, stock = ?, date = ? WHERE idproducts = ?";
+        $stmt = $this->connection->prepareStatement($sql);
+        $stmt->bind_param("ssdssisi", $name, $reference, $price, $weight, $category, $stock, $date, $id);
+
+        // Ejecutar la query
+        if ($stmt->execute()) {
+            if ($this->connection->getAffectedRows() > 0) {
+                return (array(
+                    'message' => 'Producto actualizado correctamente.',
+                    'err' => false,
+                    'code' => 200,
+                    'data' => $nuevoProductoJSON,
+                ));
+            }
+            $stmt->close();
+        } else {
+            return (array(
+                'message' => 'Error al actualiazr el producto:',
+                'err' => true,
+                'code' => 500,
+                'data' => $this->connection->error,
+            ));
+        }
+        $this->connection->desconectar();
     }
 
     public function delete($id)
@@ -108,8 +146,6 @@ class ProductRepositoryAdapter implements DatabasePort
 
     public function getAll()
     {
-
-
         $query = "SELECT * FROM products";
         $this->connection->conectar();
         $resultado = $this->connection->ejecutar($query);
@@ -121,5 +157,23 @@ class ProductRepositoryAdapter implements DatabasePort
         }
 
         return $productos_encontrados;
+    }
+
+    public function getMaxProductStock()
+    {
+        $query = "SELECT *
+        FROM products
+        WHERE stock = (SELECT MAX(stock) FROM products)
+        LIMIT 1";
+        $this->connection->conectar();
+        $resultado = $this->connection->ejecutar($query);
+        $this->connection->desconectar();
+
+        $productosMaxStock = array();
+        while ($fila = $resultado->fetch_assoc()) {
+            $productosMaxStock[] = $fila;
+        }
+
+        return $productosMaxStock;
     }
 }
