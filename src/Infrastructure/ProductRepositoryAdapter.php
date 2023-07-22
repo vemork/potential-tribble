@@ -61,6 +61,52 @@ class ProductRepositoryAdapter implements DatabasePort
         $this->connection->desconectar();
     }
 
+    public function setNewProductSold(array $data)
+    {
+        $idproduct = $data['idproduct'];
+        $quantity = $data['quantity'];
+
+        $nuevoProductoSoldJSON = [
+            'idproduct' => $data['idproduct'],
+            'quantity' => $data['quantity'],
+        ];
+        $this->connection->conectar();
+        $sql = "INSERT INTO sold (idproduct, quantity) VALUES (?, ?)";
+        $stmt = $this->connection->prepareStatement($sql);
+        $stmt->bind_param("ii", $idproduct, $quantity);
+
+        // Ejecutar la query
+        try {
+            if ($stmt->execute()) {
+                if ($this->connection->getAffectedRows() > 0) {
+                    return (array(
+                        'message' => 'Producto actualizado correctamente.',
+                        'err' => false,
+                        'code' => 200,
+                        'data' => $nuevoProductoSoldJSON,
+                    ));
+                }
+                $stmt->close();
+            } else {
+                return (array(
+                    'message' => 'Error al vender el producto:',
+                    'err' => true,
+                    'code' => 500,
+                    'data' => $this->connection->error,
+                ));
+            }
+        } catch (\Exception $e) {
+            // el prodcuto que se intenta vender ya no cuenta con stock
+            return (array(
+                'message' => 'Error al vender el producto:',
+                'err' => true,
+                'code' => 500,
+                'data' => $e->getMessage(),
+            ));
+        }
+        $this->connection->desconectar();
+    }
+
     public function setUpdateProduct(array $data)
     {
         $id = $data['id'];

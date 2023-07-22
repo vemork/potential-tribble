@@ -29,6 +29,10 @@ class ProductController
     {
         return $this->getProductsUseCase->setNewProductUseCase($data);
     }
+    public function setProductSold($data)
+    {
+        return $this->getProductsUseCase->setNewProductSoldUseCase($data);
+    }
     public function updateProduct($data)
     {
         return $this->getProductsUseCase->updateProductUseCase($data);

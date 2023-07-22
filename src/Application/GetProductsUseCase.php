@@ -42,6 +42,21 @@ class GetProductsUseCase
 
         return $this->productRepository->setNewProduct($data);
     }
+    public function setNewProductSoldUseCase($data)
+    {
+        [$msg, $err] = integridadSold($data);
+
+        // Validar los datos recibidos
+        if ($err) {
+            return (array(
+                'message' => 'Error: invalid json payload.' . $msg,
+                'err' => true,
+                'code' => 400
+            ));
+        }
+
+        return $this->productRepository->setNewProductSold($data);
+    }
     public function deleteProductUseCase($data)
     {
         if (!isset($data["id"])) {

@@ -70,6 +70,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SERVER['REQUEST_URI'] === '/add')
     echo json_encode($response);
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SERVER['REQUEST_URI'] === '/sold') {
+    $isDefaultResposneActive = false;
+
+    // Obtener los datos del producto desde el cuerpo de la petición
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Respuesta con éxito
+    $response = $productController->setProductSold($data);
+
+    http_response_code($response["code"]);
+    echo json_encode($response);
+}
+
 // Verificar si se recibe una solicitud DELETE y si se proporciona el parámetro "id"
 if ($_SERVER["REQUEST_METHOD"] === "DELETE" && $_SERVER['REQUEST_URI'] === '/delete') {
     $isDefaultResposneActive = false;
