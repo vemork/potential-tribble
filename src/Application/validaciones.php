@@ -4,14 +4,13 @@
 function integridad($data)
 {
     $props = array(
-        "id",
         "name",
-        "referencia",
+        "reference",
         "price",
-        "peso",
-        "categoria",
+        "weight",
+        "category",
         "stock",
-        "fecha_creacion"
+        "date"
     );
 
     foreach ($props as $key) {

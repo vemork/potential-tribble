@@ -49,4 +49,15 @@ class ProductRepositoryInMemory
             'data' => $this->products,
         ));
     }
+
+    public function deleteProduct($id)
+    {
+        unset($this->products[$id]);
+        return (array(
+            'message' => 'Producto eliminado correctamente.',
+            'err' => false,
+            'code' => 200,
+            'data' => $this->products,
+        ));
+    }
 }

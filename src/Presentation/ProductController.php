@@ -21,4 +21,12 @@ class ProductController
     {
         return $this->getProductsUseCase->setNewProductUseCase($data);
     }
+    public function updateProduct($data)
+    {
+        return $this->getProductsUseCase->updateProductUseCase($data);
+    }
+    public function deleteProduct($data)
+    {
+        return $this->getProductsUseCase->deleteProductUseCase($data);
+    }
 }

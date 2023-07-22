@@ -4,14 +4,16 @@ ini_set('display_errors', '1');
 header('Content-Type: application/json');
 
 require 'src/Domain/Product.php';
+require 'src/Domain/ConexionDB.php';
 require 'src/Application/GetProductsUseCase.php';
-require 'src/Infrastructure/ProductRepositoryInMemory.php';
+require 'src/Infrastructure/ProductRepositoryAdapter.php';
 require 'src/Presentation/ProductController.php';
 
 
 use App\Domain\Product;
+
 use App\Application\GetProductsUseCase;
-use App\Infrastructure\ProductRepositoryInMemory;
+use App\Infrastructure\ProductRepositoryAdapter;
 use App\Presentation\ProductController;
 
 $requestMethod = $_SERVER['REQUEST_METHOD'];
@@ -21,12 +23,12 @@ $isDefaultResposneActive = true;
 // Dependencias de la infraestructura
 $domainProduct = new Product();
 
+$connection = new ConexionDB("localhost", "root", "", "konecta");
 // Dependencias de la infraestructura
-$productRepository = new ProductRepositoryInMemory();
+$productRepository = new ProductRepositoryAdapter($connection);
 
 // Dependencias de la aplicación
 $getProductsUseCase = new GetProductsUseCase($productRepository);
-
 // Controlador para listar productos
 $productController = new ProductController($getProductsUseCase);
 
@@ -34,6 +36,7 @@ $productController = new ProductController($getProductsUseCase);
 if ($requestMethod === 'GET' && $requestPath === '/productos') {
     $isDefaultResposneActive = false;
     $response = $productController->getProducts();
+
     echo json_encode($response);
 }
 
@@ -46,6 +49,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_SERVER['REQUEST_URI'] === '/add')
 
     // Respuesta con éxito
     $response = $productController->setProduct($data);
+
+    http_response_code($response["code"]);
+    echo json_encode($response);
+}
+
+// Verificar si se recibe una solicitud DELETE y si se proporciona el parámetro "id"
+if ($_SERVER["REQUEST_METHOD"] === "DELETE" && $_SERVER['REQUEST_URI'] === '/delete') {
+    $isDefaultResposneActive = false;
+
+    // Obtener los datos del producto desde el cuerpo de la petición
+    $data = json_decode(file_get_contents('php://input'), true);
+    // Respuesta con éxito
+    $response = $productController->deleteProduct($data);
+
+    http_response_code($response["code"]);
+    echo json_encode($response);
+}
+
+// Verificar si se recibe una solicitud DELETE y si se proporciona el parámetro "id"
+if ($_SERVER["REQUEST_METHOD"] === "PUT" && $_SERVER['REQUEST_URI'] === '/update') {
+    $isDefaultResposneActive = false;
+
+    // Obtener los datos del producto desde el cuerpo de la petición
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    // Respuesta con éxito
+    $response = $productController->updateProduct($data);
 
     http_response_code($response["code"]);
     echo json_encode($response);
